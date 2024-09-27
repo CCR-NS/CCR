@@ -1,7 +1,0 @@
-doctors page
-logo dall
-presentabler
-spider graph(each game represnts an improvement therefore showing an overall using a spider graph)
-
-
- 
