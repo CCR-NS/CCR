@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECG Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Real-Time ECG Wave</h1>
+  <canvas id="ecgChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById('ecgChart').getContext('2d');
+    const ecgChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'ECG Data',
+          borderColor: 'rgb(75, 192, 192)',
+          data: [],
+          fill: false,
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: {
+            display: false
+          },
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Function to update the chart with new data
+    async function updateChart() {
+  try {
+    console.log('Fetching ECG data from server...');  // Debug: Start fetching data
+    const response = await fetch('http://localhost:3000/ecg', {
+      method: 'GET'  // Specify the HTTP method
+    });
+
+    // Check if the response status is OK (status code 200)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('ECG Data Received:', data ,data.data);  // Debug: Log the received data
+
+    // Update the labels and datasets of the chart
+    const lastTenValues = data.data.slice(-10);
+    console.log(lastTenValues)
+// Update the labels to match the last 10 indices
+    ecgChart.data.labels = Array.from({ length: lastTenValues.length }, (_, i) => i);
+    ecgChart.data.datasets[0].data = lastTenValues;
+
+    console.log('Updating chart with new data...');  // Debug: Log chart update
+    ecgChart.update();  // Actually update the chart
+    console.log('Chart updated successfully.');  // Debug: Confirm successful update
+
+  } catch (error) {
+    // Catch any errors in the fetch operation or chart update process
+    console.error('Error during fetching or updating chart:', error);  // Debug: Log the error
+  }
+}
+
+// Set the update interval to 1 second
+setInterval(updateChart, 200);
+ // Update the chart every 1 seco`nd
+  </script>
+</body>
+</html>
