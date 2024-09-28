@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECG Monitor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Real-Time ECG Wave</h1>
+  <canvas id="ecgChart"></canvas>
+
+  <script>
+    const ctx = document.getElementById('ecgChart').getContext('2d');
+    const ecgChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [], // This will hold the time or index labels
+        datasets: [{
+          label: 'ECG Data',
+          borderColor: 'rgb(75, 192, 192)',
+          data: [], // This will hold the ECG values
+          fill: false,
+        }]
+      },
+      options: {
+        animation: false,
+        scales: {
+          x: {
+            display: false // Hides the x-axis labels
+          },
+          y: {
+            beginAtZero: true // Start y-axis at zero
+          }
+        }
+      }
+    });
+
+    // Function to update the chart with new data
+    async function updateChart() {
+      try {
+        console.log('Fetching ECG data from server...'); // Debug: Start fetching data
+        const response = await fetch('http://localhost:3001/data', {
+          method: 'GET' // Specify the HTTP method
+        });
+
+        // Check if the response status is OK (status code 200)
+        if (!response.ok) {
+          throw new Error('HTTP error! status: ${response.status}');
+        }
+
+        const data = await response.json();
+        console.log('ECG Data Received:', data); // Debug: Log the received data
+
+        // Extract values from the data response
+        const values = data.map(entry => entry.value); // Get all values
+        const timestamps = data.map(entry => new Date(entry.timestamp).toLocaleTimeString()); // Format timestamps for labels
+
+        // Update the chart with the new data
+        ecgChart.data.labels = timestamps; // Set the formatted timestamps as labels
+        ecgChart.data.datasets[0].data = values; // Update chart data with the new values
+
+        console.log('Updating chart with new data...'); // Debug: Log chart update
+        ecgChart.update(); // Actually update the chart
+        console.log('Chart updated successfully.'); // Debug: Confirm successful update
+
+      } catch (error) {
+        // Catch any errors in the fetch operation or chart update process
+        console.error('Error during fetching or updating chart:', error); // Debug: Log the error
+      }
+    }
+
+    // Set the update interval to 200 milliseconds
+    setInterval(updateChart, 200); // Update the chart every 200 milliseconds
+  </script>
+</body>
+</html>
