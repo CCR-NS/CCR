@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Child Profile Dashboard</title>
   <style>
     body {
@@ -50,18 +50,21 @@
       border-bottom: 1px solid #90caf9;
     }
 
-    button {
+    button, .back-button {
       background-color: #90caf9; /* light blue */
       color: white;
-      padding: 10px;
+      padding: 10px 15px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
       margin-right: 10px;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
     }
 
-    button:hover {
+    button:hover, .back-button:hover {
       background-color: #64b5f6;
     }
 
@@ -160,10 +163,27 @@
       margin: 20px auto;
       text-align: center;
     }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .profile-dashboard {
+        margin: 20px;
+        padding: 15px;
+      }
+
+      button, .back-button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
   </style>
 </head>
 <body>
-  <img src="Symbol.png" alt="Logo" class="logo"> <a href="C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html"> </a><!-- Replace 'Symbol.png' with your logo file -->
+  <!-- Make the logo clickable by wrapping it with the <a> tag -->
+  <a href="C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html">
+    <img src="Symbol.png" alt="Logo" class="logo">
+  </a>
+  <!-- Replace 'Symbol.png' with your actual logo file -->
 
   <div class="profile-picture-container">
     <div class="profile-picture" onclick="document.getElementById('profilePicUpload').click()">
@@ -180,14 +200,11 @@
     <h1>Child Profile</h1>
 
     <!-- Switch between Parent and Doctor View -->
-<div class="view-selector">
-  <button id="parentViewBtn">Parent View</button>
-  <button id="doctorViewBtn">Doctor View</button>
-  <button id="parentViewBtn">Parent View</button>
-  <button id="backToChildPage" class="back-to-child">Back to Child Details</button>
-  <button id="backbtn"><a href="parentDash.html" class="back-button">Back</a>
-</div>
-
+    <div class="view-selector">
+      <button id="parentViewBtn">Parent View</button>
+      <button id="doctorViewBtn">Doctor View</button>
+      <a href="parentDash.html" class="back-button" style="display: none;">Back</a>
+    </div>
 
     <!-- Child's Basic Information -->
     <div class="child-profile">
@@ -224,7 +241,8 @@
         <input type="text" value="John has been improving in recognizing shapes." id="parentNotes">
       </div>
       <button class="save-button" onclick="saveParentDetails()">Save Parent Details</button>
-      <button id="backToChildPageParent">Back to Child Details</button>
+      <a href="C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html" class="back-button">Back</a>
+      <!-- Replace 'C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html' with your desired back link -->
     </div>
 
     <!-- Doctor's Section -->
@@ -237,7 +255,8 @@
         <input type="text" value="Continue neurofeedback sessions twice a week." id="doctorRecommendations">
       </div>
       <button class="save-button" onclick="saveDoctorDetails()">Save Doctor Details</button>
-      <button id="backToChildPageDoctor">Back to Child Details</button>
+      <a href="C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html" class="back-button">Back</a>
+      <!-- Replace 'C:\Users\disha\OneDrive\Desktop\oops with java\ccr\homepage.html' with your desired back link -->
     </div>
 
   </div>
@@ -246,34 +265,27 @@
     // View toggle logic for Parent and Doctor sections
     const parentViewBtn = document.getElementById('parentViewBtn');
     const doctorViewBtn = document.getElementById('doctorViewBtn');
+    const backButton = document.querySelector('.back-button');
     const parentSection = document.getElementById('parentSection');
     const doctorSection = document.getElementById('doctorSection');
-    const backToChildPage =  document.getElementById('backToChildPage');
-    const backToChildPageParent = document.getElementById('backToChildPageParent');
-    const backToChildPageDoctor = document.getElementById('backToChildPageDoctor');
 
     parentViewBtn.addEventListener('click', function() {
       parentSection.style.display = 'block';
       doctorSection.style.display = 'none';
-      backToChildPage.style.display = 'block';
+      backButton.style.display = 'inline-block';
     });
 
     doctorViewBtn.addEventListener('click', function() {
       parentSection.style.display = 'none';
       doctorSection.style.display = 'block';
-      backToChildPage.style.display = 'block';
+      backButton.style.display = 'inline-block';
     });
 
-    backToChildPageParent.addEventListener('click', function() {
+    // Hide back button when on main Child Details view
+    backButton.addEventListener('click', function() {
       parentSection.style.display = 'none';
       doctorSection.style.display = 'none';
-      backToChildPage.style.display = 'none';
-    });
-
-    backToChildPageDoctor.addEventListener('click', function() {
-      parentSection.style.display = 'none';
-      doctorSection.style.display = 'none';
-      backToChildPage.style.display = 'none';
+      backButton.style.display = 'none';
     });
 
     // Profile picture upload logic
