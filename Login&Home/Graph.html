@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line Graph for Game Score</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: #dfeaf2;
+        }
+
+        canvas {
+            margin: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Line Graph for Game Score</h1>
+    <canvas id="lineChart" width="400" height="400"></canvas>
+
+    <script>
+        // Initial data for the line chart
+        const labels = ['Memory', 'Recognition', 'Reaction Time', 'Logical Reasoning', 'Thinking'];
+        const initialData = [0, 0, 0, 0, 0]; // Initialize scores for each attribute
+
+        // Create line chart using Chart.js
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Game Scores',
+                    data: initialData,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100 // Set maximum value if needed
+                    }
+                }
+            }
+        });
+
+        // Function to fetch the latest score and update the chart
+        // Function to fetch updated scores from the backend and update the chart
+function fetchScore() {
+    fetch('/get-scores')
+        .then(response => response.json())
+        .then(data => {
+            // Assuming data has fields like data.memory, data.recognition, etc.
+            radarChart.data.datasets[0].data = [
+                data.memory,        // Memory score
+                data.recognition,   // Recognition score
+                data.reactionTime,  // Reaction Time score
+                data.logicalReasoning, // Logical Reasoning score
+                data.thinking       // Thinking score
+            ];
+
+            // Redraw the chart with the updated data
+            radarChart.update();
+        })
+        .catch(error => console.error('Error fetching scores:', error));
+}
+
+
+        // Listen for messages from the memory game page
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'updateScore') {
+                const gameScore = event.data.score; // The score sent from the memory game
+
+                // Update the backend with the new score
+                fetch('/update-score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        attribute: 'Memory', // Specify the attribute you want to update
+                        score: gameScore 
+                    }),
+                })
+                .then(() => fetchScore()); // Fetch and update chart after successfully updating the score
+            }
+        });
+
+        // Call this function when the page loads
+        fetchScore(); // Fetch initial score data to display
+    </script>
+
+</body>
+</html>
