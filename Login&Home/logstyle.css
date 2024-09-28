@@ -4,6 +4,15 @@
     padding: 0;
     box-sizing: border-box;
 } 
+/* Existing body and container styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: transparent; /* Changed background to transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
 .video-background {
     position: fixed;
     top: 0;
